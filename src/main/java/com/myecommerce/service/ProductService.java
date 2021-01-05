@@ -1,5 +1,6 @@
 package com.myecommerce.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,14 +8,16 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.myecommerce.converter.Converter;
+import com.myecommerce.dto.ProductDTO;
 import com.myecommerce.dto.ResponseBody;
 import com.myecommerce.entity.Product;
+import com.myecommerce.entity.ProductImg;
 import com.myecommerce.entity.Subcategory;
 import com.myecommerce.enumerator.ProductMessages;
 import com.myecommerce.enumerator.Result;
 import com.myecommerce.enumerator.SubcategoryMessages;
-import com.myecommerce.model.MProduct;
 import com.myecommerce.repository.CategoryRepository;
+import com.myecommerce.repository.ProductImgRepository;
 import com.myecommerce.repository.ProductRepository;
 import com.myecommerce.repository.SubcategoryRepository;
 
@@ -32,20 +35,26 @@ public class ProductService {
 	@Autowired
 	@Qualifier("categoryRepository")
 	private CategoryRepository categoryRepository;
+
+	@Autowired
+	@Qualifier("productImgRepository")
+	private ProductImgRepository productImgRepository;
 	
 	@Autowired
 	@Qualifier("converter")
 	private Converter converter;
 
-	public ResponseBody insert(Product product) {
+	public ResponseBody insert(ProductDTO productDTO) {
 		ResponseBody response = new ResponseBody("insertProduct");
+		Product product = converter.getProductFromDTO(productDTO);
 		try {
 			Subcategory subcategory = subcategoryRepository.findById(product.getIdSubcategory());
 			if(subcategory != null) {
-				repository.save(product);
+				productDTO.setId(repository.save(product).getId());
+				productImgRepository.saveAll(productDTO.getImgs());
 				response.setMsg(ProductMessages.INSERT_OK);
 				response.setResult(Result.OK);
-				response.setData(product);
+				response.setData(productDTO);
 			} else {
 				response.setMsg(SubcategoryMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
@@ -81,9 +90,10 @@ public class ProductService {
 		try {
 			Product product = repository.findById(id);
 			if (product != null) {
+				List<ProductImg> imgs = productImgRepository.findByIdProduct(product.getId());
 				response.setMsg(ProductMessages.GET_OK);
 				response.setResult(Result.OK);
-				response.setData(new MProduct(product));
+				response.setData(new ProductDTO(product, imgs));
 			} else {
 				response.setMsg(ProductMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
@@ -112,14 +122,19 @@ public class ProductService {
 	
 	private ResponseBody getMany(String request, List<Product> products) {
 		ResponseBody response = new ResponseBody(request);
-		if (products.size() > 0) {
+		List<ProductDTO> productsDTO = new ArrayList<>();
+		for(Product product : products) {
+			productsDTO.add((ProductDTO) this.get(product.getId()).getData());
+		}
+
+		if (!productsDTO.isEmpty()) {
 			response.setMsg(ProductMessages.GET_MANY_OK);
 			response.setResult(Result.OK);
+			response.setData(productsDTO);
 		} else {
 			response.setMsg(ProductMessages.GET_MANY_ERR);
 			response.setResult(Result.ERROR);
 		}
-		response.setData(converter.getMProducts(products));
 		return response;
 	}
 }

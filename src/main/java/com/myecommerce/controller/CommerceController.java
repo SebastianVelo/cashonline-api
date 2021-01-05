@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.myecommerce.dto.CommerceDTO;
 import com.myecommerce.dto.ResponseBody;
-import com.myecommerce.entity.Commerce;
 import com.myecommerce.service.CommerceService;
 
 @RestController
@@ -26,7 +26,7 @@ public class CommerceController {
 	private CommerceService service;
 	
 	@PutMapping("")
-	public ResponseEntity<ResponseBody> insert(@RequestBody @Validated Commerce commerce) {
+	public ResponseEntity<ResponseBody> insert(@RequestBody @Validated CommerceDTO commerce) {
 		HttpHeaders header = new HttpHeaders();
 		header.add("request", "insertCommerce");
 		return ResponseEntity.ok().headers(header).body(service.insert(commerce));

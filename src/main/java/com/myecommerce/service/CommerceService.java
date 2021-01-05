@@ -1,5 +1,6 @@
 package com.myecommerce.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,13 +8,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.myecommerce.converter.Converter;
+import com.myecommerce.dto.CommerceDTO;
 import com.myecommerce.dto.ResponseBody;
 import com.myecommerce.entity.Category;
 import com.myecommerce.entity.Commerce;
 import com.myecommerce.entity.CommerceStyle;
 import com.myecommerce.enumerator.CommerceMessages;
 import com.myecommerce.enumerator.Result;
-import com.myecommerce.model.MCommerce;
 import com.myecommerce.repository.CategoryRepository;
 import com.myecommerce.repository.CommerceRepository;
 import com.myecommerce.repository.CommerceStyleRepository;
@@ -45,14 +46,16 @@ public class CommerceService {
 	@Qualifier("converter")
 	private Converter converter;
 
-	public ResponseBody insert(Commerce commerce) {
+	public ResponseBody insert(CommerceDTO commerceDTO) {
 		ResponseBody response = new ResponseBody("insertCommerce");
+		Commerce commerce = converter.getCommerceFromDTO(commerceDTO);
 		try {
 			if(repository.findByPath(commerce.getPath()) == null) {
-				repository.save(commerce);
+				commerceDTO.setId(repository.save(commerce).getId());
+				commerceStyleRepository.save(commerceDTO.getStyle());
 				response.setMsg(CommerceMessages.INSERT_OK);
 				response.setResult(Result.OK);
-				response.setData(commerce);
+				response.setData(commerceDTO);
 			} else {
 				response.setMsg(CommerceMessages.INSERT_ERR_PATH);
 				response.setResult(Result.ERROR);
@@ -96,9 +99,10 @@ public class CommerceService {
 		try {
 			Commerce commerce = repository.findById(id);
 			if(commerce != null) {
+				CommerceStyle commerceStyle = commerceStyleRepository.findByIdCommerce(commerce.getId());
 				response.setMsg(CommerceMessages.GET_OK);
 				response.setResult(Result.OK);
-				response.setData(new MCommerce(commerce));
+				response.setData(new CommerceDTO(commerce, commerceStyle));
 			} else {
 				response.setMsg(CommerceMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
@@ -115,9 +119,10 @@ public class CommerceService {
 		try {
 			Commerce commerce = repository.findByPath(path);
 			if(commerce != null) {
+				CommerceStyle commerceStyle = commerceStyleRepository.findByIdCommerce(commerce.getId());
 				response.setMsg(CommerceMessages.GET_OK);
 				response.setResult(Result.OK);
-				response.setData(new MCommerce(commerce));
+				response.setData(new CommerceDTO(commerce, commerceStyle));
 			} else {
 				response.setMsg(CommerceMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
@@ -132,14 +137,18 @@ public class CommerceService {
 	public ResponseBody getByUser(long idUser) {
 		ResponseBody response = new ResponseBody("getCommercesByUser");
 		List<Commerce> commerces = repository.findByIdUser(idUser);
-		if(commerces.size() > 0) {
+		List<CommerceDTO> commercesDTO = new ArrayList<>();
+		for(Commerce commerce : commerces) {
+			commercesDTO.add((CommerceDTO) this.get(commerce.getId()).getData());
+		}
+		if(!commercesDTO.isEmpty()) {
 			response.setMsg(CommerceMessages.GET_MANY_OK);
 			response.setResult(Result.OK);
+			response.setData(commercesDTO);
 		} else {
 			response.setMsg(CommerceMessages.GET_MANY_ERR);
 			response.setResult(Result.ERROR);
 		}
-		response.setData(converter.getMCommerces(commerces));
 		return response;
 	}
 }

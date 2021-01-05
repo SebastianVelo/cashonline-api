@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.myecommerce.dto.ResponseBody;
-import com.myecommerce.entity.User;
+import com.myecommerce.dto.UserDTO;
 import com.myecommerce.service.UserService;
 
 @RestController
@@ -26,10 +26,10 @@ public class UserController {
 	private UserService service;
 	
 	@PutMapping("")
-	public ResponseEntity<ResponseBody> insert(@RequestBody @Validated User user) {
+	public ResponseEntity<ResponseBody> insert(@RequestBody @Validated UserDTO userDTO) {
 		HttpHeaders header = new HttpHeaders();
 		header.add("request", "insertUser");
-		return ResponseEntity.ok().headers(header).body(service.insert(user));
+		return ResponseEntity.ok().headers(header).body(service.insert(userDTO));
 	}
 	
 	@DeleteMapping("/{id}")

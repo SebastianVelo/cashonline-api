@@ -1,5 +1,6 @@
 package com.myecommerce.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.myecommerce.converter.Converter;
+import com.myecommerce.dto.CartDTO;
 import com.myecommerce.dto.ResponseBody;
 import com.myecommerce.entity.Cart;
 import com.myecommerce.entity.Commerce;
@@ -16,7 +18,6 @@ import com.myecommerce.enumerator.CartMessages;
 import com.myecommerce.enumerator.CommerceMessages;
 import com.myecommerce.enumerator.Result;
 import com.myecommerce.enumerator.UserMessages;
-import com.myecommerce.model.MCart;
 import com.myecommerce.repository.CartRepository;
 import com.myecommerce.repository.CommerceRepository;
 import com.myecommerce.repository.PurchaseRepository;
@@ -45,8 +46,9 @@ public class CartService {
 	@Qualifier("converter")
 	private Converter converter;
 	
-	public ResponseBody insert(Cart cart) {
+	public ResponseBody insert(CartDTO cartDTO) {
 		ResponseBody response = new ResponseBody("insertCart");
+		Cart cart = converter.getCartFromDTO(cartDTO);
 		try {
 			User user = userRepository.findById(cart.getIdUser());
 			Commerce commerce = commerceRepository.findById(cart.getIdCommerce());
@@ -57,10 +59,11 @@ public class CartService {
 				response.setMsg(CommerceMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
 			} else {
-				repository.save(cart);
+				cartDTO.setId(repository.save(cart).getId());
+				purchaseRepository.saveAll(cartDTO.getPurchases());
 				response.setMsg(CartMessages.INSERT_OK);
 				response.setResult(Result.OK);
-				response.setData(cart);
+				response.setData(cartDTO);
 			}
 		} catch (Exception e) {
 			response.setMsg(CartMessages.INSERT_ERR);
@@ -95,9 +98,10 @@ public class CartService {
 		try {
 			Cart cart = repository.findById(id);
 			if (cart != null) {
+				List<Purchase> purchases = purchaseRepository.findByIdCart(id);
 				response.setMsg(CartMessages.GET_OK);
 				response.setResult(Result.OK);
-				response.setData(new MCart(cart));
+				response.setData(new CartDTO(cart, purchases));
 			} else {
 				response.setMsg(CartMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
@@ -112,28 +116,36 @@ public class CartService {
 	public ResponseBody getByUser(long idUser) {
 		ResponseBody response = new ResponseBody("getCartByIdUser");
 		List<Cart> carts = repository.findByIdUser(idUser);
-		if(carts.size() > 0) {
+		List<CartDTO> cartsDTO = new ArrayList<>();
+		for(Cart cart : carts) {
+			cartsDTO.add((CartDTO) this.get(cart.getId()).getData());
+		}
+		if(!cartsDTO.isEmpty()) {
 			response.setMsg(CartMessages.GET_MANY_OK);
 			response.setResult(Result.OK);
+			response.setData(cartsDTO);
 		} else {
 			response.setMsg(CartMessages.GET_MANY_ERR);
 			response.setResult(Result.ERROR);
 		}
-		response.setData(converter.getMCarts(carts));
 		return response;
 	}
 	
 	public ResponseBody getByCommerce(long idCommerce) {
 		ResponseBody response = new ResponseBody("getCartByIdCommerce");
 		List<Cart> carts = repository.findByIdCommerce(idCommerce);
-		if(carts.size() > 0) {
+		List<CartDTO> cartsDTO = new ArrayList<>();
+		for(Cart cart : carts) {
+			cartsDTO.add((CartDTO) this.get(cart.getId()).getData());
+		}
+		if(!cartsDTO.isEmpty()) {
 			response.setMsg(CartMessages.GET_MANY_OK);
 			response.setResult(Result.OK);
+			response.setData(cartsDTO);
 		} else {
 			response.setMsg(CartMessages.GET_MANY_ERR);
 			response.setResult(Result.ERROR);
 		}
-		response.setData(converter.getMCarts(carts));
 		return response;
 	}
 }

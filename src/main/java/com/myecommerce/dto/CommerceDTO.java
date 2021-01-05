@@ -1,28 +1,28 @@
-package com.myecommerce.model;
+package com.myecommerce.dto;
 
 import com.myecommerce.entity.Commerce;
+import com.myecommerce.entity.CommerceStyle;
 
-public class MCommerce extends Model {
+public class CommerceDTO {
+
+	private long id;
 	private long idUser;
 	private String name;
 	private String path;
 	private String description;
+	private CommerceStyle style;
+
+	public CommerceDTO() {
+
+	}
 	
-	public MCommerce (Commerce commerce) {	
+	public CommerceDTO(Commerce commerce, CommerceStyle style) {
 		this.id = commerce.getId();
 		this.idUser = commerce.getIdUser();
 		this.name = commerce.getName();
 		this.path = commerce.getPath();
 		this.description = commerce.getDescription();
-	}
-
-	public MCommerce(long id, long idUser, String name, String path, String description) {
-		super();
-		this.id = id;
-		this.idUser = idUser;
-		this.name = name;
-		this.path = path;
-		this.description = description;
+		this.style = style;
 	}
 
 	public long getIdUser() {
@@ -56,5 +56,22 @@ public class MCommerce extends Model {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
+	public CommerceStyle getStyle() {
+		return style;
+	}
+
+	public void setStyle(CommerceStyle style) {
+		this.style = style;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+		this.style.setIdCommerce(id);
+	}
+
 }

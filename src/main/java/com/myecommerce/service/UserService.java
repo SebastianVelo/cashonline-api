@@ -4,11 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.myecommerce.converter.Converter;
 import com.myecommerce.dto.ResponseBody;
+import com.myecommerce.dto.UserDTO;
 import com.myecommerce.entity.User;
+import com.myecommerce.entity.UserData;
 import com.myecommerce.enumerator.UserMessages;
 import com.myecommerce.enumerator.Result;
-import com.myecommerce.model.MUser;
+import com.myecommerce.repository.UserDataRepository;
 import com.myecommerce.repository.UserRepository;
 
 @Service("userService")
@@ -18,8 +21,17 @@ public class UserService {
 	@Qualifier("userRepository")
 	private UserRepository repository;
 
-	public ResponseBody insert(User user) {
+	@Autowired
+	@Qualifier("userDataRepository")
+	private UserDataRepository userDataRepository;
+	
+	@Autowired
+	@Qualifier("converter")
+	private Converter converter;
+
+	public ResponseBody insert(UserDTO userDTO) {
 		ResponseBody response = new ResponseBody("insertUser");
+		User user = converter.getUserFromDTO(userDTO);
 		try {
 			if (repository.findByUsername(user.getUsername()) != null) {
 				response.setMsg(UserMessages.INSERT_ERR_USERNAME);
@@ -28,10 +40,12 @@ public class UserService {
 				response.setMsg(UserMessages.INSERT_ERR_EMAIL);
 				response.setResult(Result.ERROR);
 			} else {
-				repository.save(user);
+				userDTO.setId(repository.save(user).getId());
+				UserData userData = converter.getUserDataFromDTO(userDTO);
+				userDataRepository.save(userData);
 				response.setMsg(UserMessages.INSERT_OK);
 				response.setResult(Result.OK);
-				response.setData(user);
+				response.setData(userDTO);
 			}
 		} catch (Exception e) {
 			response.setMsg(UserMessages.INSERT_ERR);
@@ -64,9 +78,10 @@ public class UserService {
 		try {
 			User user = repository.findById(id);
 			if (user != null) {
+				UserData userData = userDataRepository.findByIdUser(user.getId());
 				response.setMsg(UserMessages.GET_OK);
 				response.setResult(Result.OK);
-				response.setData(new MUser(user));
+				response.setData(new UserDTO(user, userData));
 			} else {
 				response.setMsg(UserMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
@@ -83,9 +98,10 @@ public class UserService {
 		try {
 			User user = repository.findByUsername(userName);
 			if (user != null) {
+				UserData userData = userDataRepository.findByIdUser(user.getId());
 				response.setMsg(UserMessages.GET_OK);
 				response.setResult(Result.OK);
-				response.setData(new MUser(user));
+				response.setData(new UserDTO(user, userData));
 			} else {
 				response.setMsg(UserMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
@@ -102,9 +118,10 @@ public class UserService {
 		try {
 			User user = repository.findByEmail(email);
 			if (user != null) {
+				UserData userData = userDataRepository.findByIdUser(user.getId());
 				response.setMsg(UserMessages.GET_OK);
 				response.setResult(Result.OK);
-				response.setData(new MUser(user));
+				response.setData(new UserDTO(user, userData));
 			} else {
 				response.setMsg(UserMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
@@ -121,9 +138,10 @@ public class UserService {
 		try {
 			User user = repository.findByUsernameAndPassword(userName, password);
 			if (user != null) {
+				UserData userData = userDataRepository.findByIdUser(user.getId());
 				response.setMsg(UserMessages.CHECK_OK);
 				response.setResult(Result.OK);
-				response.setData(new MUser(user));
+				response.setData(new UserDTO(user, userData));
 			} else {
 				response.setMsg(UserMessages.CHECK_ERR);
 				response.setResult(Result.ERROR);

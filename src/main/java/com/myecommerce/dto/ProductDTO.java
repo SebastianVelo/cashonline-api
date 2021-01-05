@@ -1,19 +1,26 @@
-package com.myecommerce.model;
+package com.myecommerce.dto;
+
+import java.util.List;
 
 import com.myecommerce.entity.Product;
+import com.myecommerce.entity.ProductImg;
 
-public class MProduct extends Model {
+public class ProductDTO  {
+	private long id;
 	private long idSubcategory;
 	private String name;
 	private String description;
 	private int stock;
 	private int price;
 	private String currency;
-	private String imgs;
 	private boolean showInHome;
+	private List<ProductImg> imgs;
 
+	public ProductDTO() {
+		
+	}
 
-	public MProduct(Product product) {
+	public ProductDTO(Product product, List<ProductImg> imgs) {
 		this.id = product.getId();
 		this.idSubcategory = product.getIdSubcategory();
 		this.name = product.getName();
@@ -21,23 +28,8 @@ public class MProduct extends Model {
 		this.stock = product.getStock();
 		this.price = product.getPrice();
 		this.currency = product.getCurrency();
-		this.imgs = product.getImgs();
 		this.showInHome = product.isShowInHome();
-	}
-
-
-	public MProduct(long id, long idSubcategory, String name, String description, int stock, int price,
-			String currency, String imgs, boolean showInHome) {
-		super();
-		this.id = id;
-		this.idSubcategory = idSubcategory;
-		this.name = name;
-		this.description = description;
-		this.stock = stock;
-		this.price = price;
-		this.currency = currency;
 		this.imgs = imgs;
-		this.showInHome = showInHome;
 	}
 
 	public long getIdSubcategory() {
@@ -100,12 +92,12 @@ public class MProduct extends Model {
 	}
 
 
-	public String getImgs() {
+	public List<ProductImg> getImgs() {
 		return imgs;
 	}
 
 
-	public void setImgs(String imgs) {
+	public void setImgs(List<ProductImg> imgs) {
 		this.imgs = imgs;
 	}
 
@@ -116,5 +108,16 @@ public class MProduct extends Model {
 
 	public void setShowInHome(boolean showInHome) {
 		this.showInHome = showInHome;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+		for(ProductImg productImg : this.imgs) {
+			productImg.setIdProduct(id);
+		}
 	}
 }
