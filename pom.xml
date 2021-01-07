@@ -9,11 +9,11 @@
 		<version>2.3.5.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.myecommerce</groupId>
-	<artifactId>MyECommerce</artifactId>
+	<groupId>com.cashonline</groupId>
+	<artifactId>CashOnline</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>MyECommerce</name>
-	<description>Backend for MyECommerce</description>
+	<name>CashOnline</name>
+	<description>Backend for CashOnline</description>
 
 	<properties>
 		<java.version>11</java.version>
