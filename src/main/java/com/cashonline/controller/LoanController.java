@@ -44,9 +44,9 @@ public class LoanController {
 		return ResponseEntity.ok().headers(util.getHeaders("get")).body(service.get(id));
 	}
 
-	@GetMapping("/user/{idUser}")
-	public ResponseEntity<ResponseBody> getByUser(@PathVariable("idUser") long idUser) {
-		return ResponseEntity.ok().headers(util.getHeaders("getByUser")).body(service.getByUser(idUser));
+	@GetMapping("/user/{idUser}/{page}/{size}")
+	public ResponseEntity<ResponseBody> getByUser(@PathVariable("idUser") long idUser, @PathVariable("page") int page, @PathVariable("size") int size) {
+		return ResponseEntity.ok().headers(util.getHeaders("getByUser")).body(service.getByUser(page, size, idUser));
 	}
 
 	@GetMapping("/all/{page}/{size}")

@@ -1,7 +1,6 @@
 package com.cashonline.repository;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +14,6 @@ public interface LoanRepository extends PagingAndSortingRepository<Loan, Seriali
 
 	public abstract Page<Loan> findAll(Pageable pageable);
 	public abstract Loan findById(long id);
-	public abstract List<Loan> findByIdUser(long idUser);
+	public abstract Page<Loan> findByIdUser(long idUser, Pageable pageable);
 	public abstract Long deleteByIdUser(long idUser);
 }

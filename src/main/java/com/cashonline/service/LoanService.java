@@ -1,5 +1,7 @@
 package com.cashonline.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +37,8 @@ public class LoanService {
 	@Qualifier("converter")
 	private Converter converter;
 	
+	private Logger logger = LoggerFactory.getLogger(LoanService.class);
+	
 	public ResponseBody insert(LoanDTO loanDTO) {
 		ResponseBody response = new ResponseBody("insertLoan");
 		Loan loan = converter.getLoanFromDTO(loanDTO);
@@ -49,9 +53,11 @@ public class LoanService {
 				response.setResult(Result.OK);
 				response.setData(loanDTO);
 			}
+			logger.info(response.getMsg());
 		} catch (Exception e) {
 			response.setMsg(LoanMessages.INSERT_ERR);
 			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
 		}
 		return response;
 	}
@@ -68,9 +74,11 @@ public class LoanService {
 				response.setMsg(LoanMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
 			}
+			logger.info(response.getMsg());
 		} catch (Exception e) {
 			response.setMsg(LoanMessages.DELETE_ERR);
 			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
 		}
 		return response;
 	}
@@ -87,17 +95,20 @@ public class LoanService {
 				response.setMsg(LoanMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
 			}
+			logger.info(response.getMsg());
 		} catch (Exception e) {
 			response.setMsg(LoanMessages.GET_ERR);
 			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
 		}
 		return response;
 	}
 
-	public ResponseBody getByUser(long idUser) {
+	public ResponseBody getByUser(int page, int size, long idUser) {
 		ResponseBody response = new ResponseBody("getLoanByIdUser");
 		try {
-			List<Loan> loans = repository.findByIdUser(idUser);
+			Pageable pageable = PageRequest.of(page, size);
+			List<Loan> loans = repository.findByIdUser(idUser, pageable).toList();
 			if (!loans.isEmpty()) {
 				response.setMsg(LoanMessages.GET_OK);
 				response.setResult(Result.OK);
@@ -106,9 +117,11 @@ public class LoanService {
 				response.setMsg(LoanMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
 			}
+			logger.info(response.getMsg());
 		} catch (Exception e) {
 			response.setMsg(LoanMessages.GET_ERR);
 			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
 		}
 		return response;
 	}
@@ -126,9 +139,11 @@ public class LoanService {
 				response.setMsg(LoanMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
 			}
+			logger.info(response.getMsg());
 		} catch (Exception e) {
 			response.setMsg(LoanMessages.GET_ERR);
 			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
 		}
 		return response;
 	}

@@ -1,5 +1,7 @@
 package com.cashonline.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,8 @@ public class UserService {
 	@Qualifier("converter")
 	private Converter converter;
 
+	private Logger logger = LoggerFactory.getLogger(UserService.class);
+
 	public ResponseBody insert(UserDTO userDTO) {
 		ResponseBody response = new ResponseBody("insertUser");
 		User user = converter.getUserFromDTO(userDTO);
@@ -57,9 +61,11 @@ public class UserService {
 				response.setResult(Result.OK);
 				response.setData(userDTO);
 			}
+			logger.info(response.getMsg());
 		} catch (Exception e) {
 			response.setMsg(UserMessages.INSERT_ERR);
 			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
 		}
 		return response;
 	}
@@ -79,9 +85,11 @@ public class UserService {
 				response.setMsg(UserMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
 			}
+			logger.info(response.getMsg());
 		} catch (Exception e) {
 			response.setMsg(UserMessages.DELETE_ERR);
 			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
 		}
 		return response;
 	}
@@ -100,9 +108,11 @@ public class UserService {
 				response.setMsg(UserMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
 			}
+			logger.info(response.getMsg());
 		} catch (Exception e) {
 			response.setMsg(UserMessages.GET_ERR);
 			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
 		}
 		return response;
 	}
@@ -121,9 +131,11 @@ public class UserService {
 				response.setMsg(UserMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
 			}
+			logger.info(response.getMsg());
 		} catch (Exception e) {
 			response.setMsg(UserMessages.GET_ERR);
 			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
 		}
 		return response;
 	}

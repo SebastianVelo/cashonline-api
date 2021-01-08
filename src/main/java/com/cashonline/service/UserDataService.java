@@ -1,5 +1,7 @@
 package com.cashonline.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,8 @@ public class UserDataService {
 	@Qualifier("converter")
 	private Converter converter;
 	
+	private Logger logger = LoggerFactory.getLogger(UserDataService.class);
+	
 	public ResponseBody insert(UserDataDTO userDataDTO) {
 		ResponseBody response = new ResponseBody("insertUserData");
 		UserData userData = converter.getUserDataFromDTO(userDataDTO);
@@ -44,9 +48,11 @@ public class UserDataService {
 				response.setResult(Result.OK);
 				response.setData(userDataDTO);
 			}
+			logger.info(response.getMsg());
 		} catch (Exception e) {
 			response.setMsg(UserDataMessages.INSERT_ERR);
 			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
 		}
 		return response;
 	}
@@ -63,9 +69,11 @@ public class UserDataService {
 				response.setMsg(UserDataMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
 			}
+			logger.info(response.getMsg());
 		} catch (Exception e) {
 			response.setMsg(UserDataMessages.DELETE_ERR);
 			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
 		}
 		return response;
 	}
@@ -82,9 +90,11 @@ public class UserDataService {
 				response.setMsg(UserDataMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
 			}
+			logger.info(response.getMsg());
 		} catch (Exception e) {
 			response.setMsg(UserDataMessages.GET_ERR);
 			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
 		}
 		return response;
 	}
@@ -101,9 +111,11 @@ public class UserDataService {
 				response.setMsg(UserDataMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
 			}
+			logger.info(response.getMsg());
 		} catch (Exception e) {
 			response.setMsg(UserDataMessages.GET_ERR);
 			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
 		}
 		return response;
 	}
