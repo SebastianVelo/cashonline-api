@@ -2,7 +2,6 @@ package com.cashonline.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cashonline.dto.ResponseBody;
 import com.cashonline.dto.UserDTO;
 import com.cashonline.service.UserService;
+import com.cashonline.util.Util;
 
 @RestController
 @RequestMapping("/cashonline/user")
@@ -25,32 +25,28 @@ public class UserController {
 	@Qualifier("userService")
 	private UserService service;
 	
+	@Autowired
+	@Qualifier("util")
+	private Util util;
+
 	@PutMapping("")
 	public ResponseEntity<ResponseBody> insert(@RequestBody @Validated UserDTO userDTO) {
-		HttpHeaders header = new HttpHeaders();
-		header.add("request", "insertUser");
-		return ResponseEntity.ok().headers(header).body(service.insert(userDTO));
+		return ResponseEntity.ok().headers(util.getHeaders("insert")).body(service.insert(userDTO));
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<ResponseBody> delete(@PathVariable("id") long id) {
-		HttpHeaders header = new HttpHeaders();
-		header.add("request", "deleteUser");
-		return ResponseEntity.ok().headers(header).body(service.delete(id));
+		return ResponseEntity.ok().headers(util.getHeaders("delete")).body(service.delete(id));
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<ResponseBody> get(@PathVariable("id") long id) {
-		HttpHeaders header = new HttpHeaders();
-		header.add("request", "getById");
-		return ResponseEntity.ok().headers(header).body(service.get(id));
+		return ResponseEntity.ok().headers(util.getHeaders("get")).body(service.get(id));
 	}
 	
 	@GetMapping("/email/{email}")
 	public ResponseEntity<ResponseBody> getByEmail(@PathVariable("email") String email) {
-		HttpHeaders header = new HttpHeaders();
-		header.add("request", "getUserByEmail");
-		return ResponseEntity.ok().headers(header).body(service.getByEmail(email));
+		return ResponseEntity.ok().headers(util.getHeaders("getByEmail")).body(service.getByEmail(email));
 	}
 
 }
