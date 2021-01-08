@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cashonline.dto.ResponseBody;
+
+import java.util.List;
+
 import com.cashonline.dto.LoanDTO;
 import com.cashonline.service.LoanService;
 import com.cashonline.util.Util;
@@ -32,6 +35,11 @@ public class LoanController {
 	@PutMapping("")
 	public ResponseEntity<ResponseBody> insert(@RequestBody @Validated LoanDTO loan) {
 		return ResponseEntity.ok().headers(util.getHeaders("insert")).body(service.insert(loan));
+	}
+
+	@PutMapping("/all")
+	public ResponseEntity<ResponseBody> insertAll(@RequestBody @Validated List<LoanDTO> loans) {
+		return ResponseEntity.ok().headers(util.getHeaders("insertAll")).body(service.insertAll(loans));
 	}
 	
 	@DeleteMapping("/{id}")

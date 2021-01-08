@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.cashonline.util.Converter;
 import com.cashonline.dto.ResponseBody;
@@ -62,6 +63,20 @@ public class LoanService {
 		return response;
 	}
 
+	public ResponseBody insertAll(List<LoanDTO> loansDTO) {
+		ResponseBody response = new ResponseBody("insertLoans");
+		try {
+			loansDTO.stream().collect(Collectors.toList()).forEach(this::insert);
+			response.setMsg(LoanMessages.INSERT_OK);
+			response.setResult(Result.OK);
+		} catch (Exception e) {
+			response.setMsg(LoanMessages.INSERT_ERR);
+			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
+		}
+		return response;
+	}
+
 	public ResponseBody delete(long id) {
 		ResponseBody response = new ResponseBody("deleteLoan");
 		try {
@@ -105,10 +120,10 @@ public class LoanService {
 	}
 
 	public ResponseBody getByUser(int page, int size, long idUser) {
-		ResponseBody response = new ResponseBody("getLoanByIdUser");
+		ResponseBody response = new ResponseBody("getLoansByIdUser");
 		try {
 			Pageable pageable = PageRequest.of(page, size);
-			List<Loan> loans = repository.findByIdUserPaging(idUser, pageable).toList();
+			List<Loan> loans = repository.findByIdUser(idUser, pageable).toList();
 			if (!loans.isEmpty()) {
 				response.setMsg(LoanMessages.GET_OK);
 				response.setResult(Result.OK);

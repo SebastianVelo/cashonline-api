@@ -3,8 +3,10 @@ package com.cashonline.enumerator;
 public enum UserMessages implements Message {
 
 	INSERT_OK ("¡Usuario creado con exito!"),
+	INSERT_MANY_OK ("¡Usuarios creados con exito!"),
 	INSERT_ERR_EMAIL ("El email ya ha sido utilizado."),
 	INSERT_ERR ("Ha ocurrido un error al crear el usuario."),
+	INSERT_MANY_ERR ("Ha ocurrido un error al crear los usuarios."),
 	
 	DELETE_OK ("¡Usuario borrado con exito!"),
 	DELETE_ERR ("Ha ocurrido un error al borrar el usuario."),

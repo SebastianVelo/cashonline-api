@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -64,6 +65,20 @@ public class UserService {
 			logger.info(response.getMsg());
 		} catch (Exception e) {
 			response.setMsg(UserMessages.INSERT_ERR);
+			response.setResult(Result.ERROR);
+			logger.error(e.getMessage(), e);
+		}
+		return response;
+	}
+
+	public ResponseBody insertAll(List<UserDTO> usersDTO) {
+		ResponseBody response = new ResponseBody("insertUsers");
+		try {
+			usersDTO.stream().collect(Collectors.toList()).forEach(this::insert);
+			response.setMsg(UserMessages.INSERT_MANY_OK);
+			response.setResult(Result.OK);
+		} catch (Exception e) {
+			response.setMsg(UserMessages.INSERT_MANY_ERR);
 			response.setResult(Result.ERROR);
 			logger.error(e.getMessage(), e);
 		}

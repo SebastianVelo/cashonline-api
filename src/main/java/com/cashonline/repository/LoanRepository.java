@@ -16,6 +16,6 @@ public interface LoanRepository extends PagingAndSortingRepository<Loan, Seriali
 	public abstract Page<Loan> findAll(Pageable pageable);
 	public abstract Loan findById(long id);
 	public abstract List<Loan> findByIdUser(long idUser);
-	public abstract Page<Loan> findByIdUserPaging(long idUser, Pageable pageable);
+	public abstract Page<Loan> findByIdUser(long idUser, Pageable pageable);
 	public abstract Long deleteByIdUser(long idUser);
 }
