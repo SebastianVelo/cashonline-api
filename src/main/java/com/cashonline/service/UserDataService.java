@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.cashonline.converter.Converter;
+import com.cashonline.util.Converter;
 import com.cashonline.dto.ResponseBody;
 import com.cashonline.dto.UserDataDTO;
 import com.cashonline.entity.User;

@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import com.cashonline.converter.Converter;
+import com.cashonline.util.Converter;
 import com.cashonline.dto.ResponseBody;
 import com.cashonline.dto.UserDTO;
 import com.cashonline.entity.Loan;

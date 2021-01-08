@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import com.cashonline.converter.Converter;
+import com.cashonline.util.Converter;
 import com.cashonline.dto.ResponseBody;
 import com.cashonline.dto.LoanDTO;
 import com.cashonline.dto.LoanListDTO;
@@ -108,7 +108,7 @@ public class LoanService {
 		ResponseBody response = new ResponseBody("getLoanByIdUser");
 		try {
 			Pageable pageable = PageRequest.of(page, size);
-			List<Loan> loans = repository.findByIdUser(idUser, pageable).toList();
+			List<Loan> loans = repository.findByIdUserPaging(idUser, pageable).toList();
 			if (!loans.isEmpty()) {
 				response.setMsg(LoanMessages.GET_OK);
 				response.setResult(Result.OK);
