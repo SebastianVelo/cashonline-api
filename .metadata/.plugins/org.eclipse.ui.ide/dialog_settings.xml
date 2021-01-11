@@ -2,6 +2,7 @@
 <section name="Workbench">
 	<list key="installedFeatures">
 		<item value="com.ianbrandt.tools.m2e.mdp.feature:0.0.4.201409291703"/>
+		<item value="io.github.pyvesb.eclipse_planet_themes:0.1.12.202010150659"/>
 		<item value="org.eclipse.buildship:3.1.4.v20200326-1743"/>
 		<item value="org.eclipse.egit.gitflow.feature:5.8.0.202006091008-r"/>
 		<item value="org.eclipse.egit:5.8.0.202006091008-r"/>
