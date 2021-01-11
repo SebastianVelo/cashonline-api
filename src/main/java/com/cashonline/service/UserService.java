@@ -84,7 +84,7 @@ public class UserService {
 		}
 		return response;
 	}
-	
+
 	@Transactional
 	public ResponseBody delete(long id) {
 		ResponseBody response = new ResponseBody("deleteUser");

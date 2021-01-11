@@ -49,7 +49,7 @@ public class LoanService {
 				response.setMsg(UserMessages.ERR_NOT_EXISTS);
 				response.setResult(Result.ERROR);
 			} else {
-				repository.save(loan);
+				loanDTO.setId(repository.save(loan).getId());
 				response.setMsg(LoanMessages.INSERT_OK);
 				response.setResult(Result.OK);
 				response.setData(loanDTO);
@@ -119,17 +119,17 @@ public class LoanService {
 		return response;
 	}
 
-	public ResponseBody getByUser(int page, int size, long idUser) {
+	public ResponseBody getByUser(long idUser, int page, int size) {
 		ResponseBody response = new ResponseBody("getLoansByIdUser");
 		try {
 			Pageable pageable = PageRequest.of(page, size);
 			List<Loan> loans = repository.findByIdUser(idUser, pageable).toList();
 			if (!loans.isEmpty()) {
-				response.setMsg(LoanMessages.GET_OK);
+				response.setMsg(LoanMessages.GET_MANY_OK);
 				response.setResult(Result.OK);
 				response.setData(new LoanListDTO(loans));
 			} else {
-				response.setMsg(LoanMessages.ERR_NOT_EXISTS);
+				response.setMsg(LoanMessages.GET_MANY_ERR);
 				response.setResult(Result.ERROR);
 			}
 			logger.info(response.getMsg());
@@ -147,11 +147,11 @@ public class LoanService {
 			Pageable pageable = PageRequest.of(page, size);
 			List<Loan> loans = repository.findAll(pageable).toList();
 			if (!loans.isEmpty()) {
-				response.setMsg(LoanMessages.GET_OK);
+				response.setMsg(LoanMessages.GET_MANY_OK);
 				response.setResult(Result.OK);
 				response.setData(new LoanListDTO(loans));
 			} else {
-				response.setMsg(LoanMessages.ERR_NOT_EXISTS);
+				response.setMsg(LoanMessages.GET_MANY_ERR);
 				response.setResult(Result.ERROR);
 			}
 			logger.info(response.getMsg());

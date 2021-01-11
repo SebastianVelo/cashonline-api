@@ -54,7 +54,7 @@ public class LoanController {
 
 	@GetMapping("/user/{idUser}/{page}/{size}")
 	public ResponseEntity<ResponseBody> getByUser(@PathVariable("idUser") long idUser, @PathVariable("page") int page, @PathVariable("size") int size) {
-		return ResponseEntity.ok().headers(util.getHeaders("getByUser")).body(service.getByUser(page, size, idUser));
+		return ResponseEntity.ok().headers(util.getHeaders("getByUser")).body(service.getByUser(idUser, page, size));
 	}
 
 	@GetMapping("/all/{page}/{size}")
